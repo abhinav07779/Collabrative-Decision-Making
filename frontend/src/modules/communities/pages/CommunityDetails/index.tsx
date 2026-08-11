@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCommunity, useCommunityMembership } from "../../hooks/useCommunity";
 import { CommunityHeader } from "../../components/CommunityHeader";
 import { useAuth } from "@/context/AuthContext";
+import { useDecisions } from "@/modules/decisions/hooks/useDecisions";
+import { DecisionCard } from "@/modules/decisions/components/DecisionCard";
+import { DecisionFeedSkeleton } from "@/modules/decisions/components/DecisionSkeleton";
 
 export default function CommunityDetails() {
   const { id } = useParams<{ id: string }>();
@@ -14,10 +17,11 @@ export default function CommunityDetails() {
   
   const { data: community, isLoading, isError, refetch } = useCommunity(communityId);
   const { data: membership } = useCommunityMembership(communityId);
+  const { data: decisionsData, isLoading: isLoadingDecisions } = useDecisions({ communityId });
   
   const isMember = membership?.status === "ACTIVE";
 
-  if (isLoading) {
+  if (isLoading || isLoadingDecisions) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
@@ -45,52 +49,36 @@ export default function CommunityDetails() {
     <div className="max-w-6xl mx-auto space-y-6">
       <CommunityHeader community={community} membership={membership || null} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-slate-900 border-slate-800 shadow-lg">
-            <CardHeader className="border-b border-slate-800 pb-4">
-              <CardTitle className="text-xl text-white flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-500" />
-                Recent Decisions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
+      <div>
+        <Card className="bg-slate-900 border-slate-800 shadow-lg">
+          <CardHeader className="border-b border-slate-800 pb-4">
+            <CardTitle className="text-xl text-white flex items-center">
+              <FileText className="w-5 h-5 mr-2 text-blue-500" />
+              Recent Decisions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            {!decisionsData?.content || decisionsData.content.length === 0 ? (
               <div className="text-center py-10">
                 <p className="text-slate-400">No decisions have been posted in this community yet.</p>
                 {isMember && (
-                  <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white">
-                    Create a Decision
+                  <Button asChild className="mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+                    <Link to="/decisions/new">Create a Decision</Link>
                   </Button>
                 )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card className="bg-slate-900 border-slate-800 shadow-lg">
-            <CardHeader className="border-b border-slate-800 pb-4">
-              <CardTitle className="text-xl text-white flex items-center justify-between">
-                <div className="flex items-center">
-                  <Users className="w-5 h-5 mr-2 text-blue-500" />
-                  Community Info
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <p className="text-sm text-slate-300">
-                {community.description || "A place to collaborate and make decisions together."}
-              </p>
-              
-              <Button asChild variant="outline" className="w-full border-slate-700 bg-slate-800 text-white hover:bg-slate-700">
-                <Link to={`/communities/${communityId}/members`}>
-                  View All Members
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+            ) : (
+              <div className="flex flex-col space-y-6">
+                {decisionsData.content.map((decision: any) => (
+                  <DecisionCard 
+                    key={decision.decisionId} 
+                    decision={decision} 
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import com.decisionhub.entity.Decision;
 import com.decisionhub.entity.Option;
 import com.decisionhub.entity.User;
 import com.decisionhub.entity.Vote;
+import com.decisionhub.entity.VoteSelection;
 import com.decisionhub.exception.BusinessException;
 import com.decisionhub.exception.DuplicateException;
 import com.decisionhub.exception.EntityNotFoundException;
@@ -20,6 +21,7 @@ import com.decisionhub.repository.DecisionRepository;
 import com.decisionhub.repository.OptionRepository;
 import com.decisionhub.repository.UserRepository;
 import com.decisionhub.repository.VoteRepository;
+import com.decisionhub.repository.VoteSelectionRepository;
 import com.decisionhub.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,9 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class VoteServiceImpl implements VoteService {
     private final DecisionRepository decisionRepository;
     private final OptionRepository optionRepository;
     private final UserRepository userRepository;
+    private final VoteSelectionRepository voteSelectionRepository;
     private final UserMapper userMapper;
     private final OptionMapper optionMapper;
 
@@ -67,8 +72,6 @@ public class VoteServiceImpl implements VoteService {
     private VoteResponse processVoteExecution(User voter, VoteRequest request) {
         Decision decision = decisionRepository.findById(request.getDecisionId())
                 .orElseThrow(() -> new EntityNotFoundException("Decision", "id", request.getDecisionId()));
-        Option option = optionRepository.findById(request.getOptionId())
-                .orElseThrow(() -> new EntityNotFoundException("Option", "id", request.getOptionId()));
 
         if (decision.getStatus() != DecisionStatus.ACTIVE) {
             throw new BusinessException("Voting is closed for this decision board.");
@@ -77,36 +80,62 @@ public class VoteServiceImpl implements VoteService {
             throw new BusinessException("The voting deadline has expired.");
         }
 
-        // Single Choice Check
-        if (voter != null && decision.getVoteType() == VoteType.SINGLE) {
+        if (request.getSelections() == null || request.getSelections().isEmpty()) {
+            throw new BusinessException("At least one selection is required.");
+        }
+
+        if (decision.getVoteType() == VoteType.SINGLE && request.getSelections().size() > 1) {
+            throw new BusinessException("Single-choice decision allows only one option.");
+        }
+
+        if (voter != null) {
             if (voteRepository.existsByUserUserIdAndDecisionDecisionId(voter.getUserId(), decision.getDecisionId())) {
-                throw new DuplicateException("You have already cast a vote on this single-choice decision board.");
+                throw new DuplicateException("You have already cast a vote on this decision board.");
             }
         }
 
-        // Rating Scale Validation
-        if (decision.getVoteType() == VoteType.RATING) {
-            if (request.getRating() == null || request.getRating() < 1 || request.getRating() > 10) {
-                throw new BusinessException("Rating vote requires a score between 1 and 10.");
-            }
-            optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.valueOf(request.getRating()));
-        } else {
-            optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.ONE);
-        }
-
-        Vote vote = voteRepository.save(Vote.builder()
+        Vote vote = Vote.builder()
                 .decision(decision)
-                .option(option)
                 .user(voter)
-                .rating(request.getRating())
-                .build());
+                .build();
+
+        List<VoteResponse.SelectionResponseDto> selectionResponses = new ArrayList<>();
+
+        for (VoteRequest.SelectionDto sel : request.getSelections()) {
+            Option option = optionRepository.findById(sel.getOptionId())
+                    .orElseThrow(() -> new EntityNotFoundException("Option", "id", sel.getOptionId()));
+
+            if (!option.getDecision().getDecisionId().equals(decision.getDecisionId())) {
+                throw new BusinessException("Option does not belong to this decision.");
+            }
+
+            Integer rating = sel.getRating();
+            if (decision.getVoteType() == VoteType.RATING) {
+                if (rating == null || rating < 1 || rating > 10) {
+                    throw new BusinessException("Rating vote requires a score between 1 and 10.");
+                }
+                optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.valueOf(rating));
+            } else {
+                optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.ONE);
+            }
+
+            VoteSelection voteSelection = VoteSelection.builder()
+                    .vote(vote)
+                    .option(option)
+                    .rating(rating)
+                    .build();
+
+            vote.getSelections().add(voteSelection);
+            selectionResponses.add(new VoteResponse.SelectionResponseDto(option.getOptionId(), rating));
+        }
+
+        vote = voteRepository.save(vote);
 
         return VoteResponse.builder()
                 .voteId(vote.getVoteId())
                 .decisionId(decision.getDecisionId())
-                .optionId(option.getOptionId())
                 .voter(voter != null ? userMapper.toResponse(voter) : null)
-                .rating(vote.getRating())
+                .selections(selectionResponses)
                 .createdAt(vote.getCreatedAt())
                 .build();
     }
@@ -121,8 +150,94 @@ public class VoteServiceImpl implements VoteService {
             throw new ForbiddenException("You can only modify your own registered vote.");
         }
 
-        voteRepository.delete(vote);
-        return castVote(userId, request);
+        Decision decision = vote.getDecision();
+        if (decision.getStatus() != DecisionStatus.ACTIVE) {
+            throw new BusinessException("Voting is closed for this decision board.");
+        }
+        if (decision.getDeadline() != null && decision.getDeadline().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("The voting deadline has expired.");
+        }
+
+        if (request.getSelections() == null || request.getSelections().isEmpty()) {
+            throw new BusinessException("At least one selection is required.");
+        }
+
+        if (decision.getVoteType() == VoteType.SINGLE && request.getSelections().size() > 1) {
+            throw new BusinessException("Single-choice decision allows only one option.");
+        }
+
+        // Subtract old scores
+        for (VoteSelection vs : vote.getSelections()) {
+            BigDecimal subtractScore = vs.getRating() != null ? BigDecimal.valueOf(vs.getRating()) : BigDecimal.ONE;
+            optionRepository.updateOptionScore(vs.getOption().getOptionId(), subtractScore.negate());
+        }
+
+        // Explicitly delete old selections to ensure Hibernate removes them from the DB immediately
+        voteSelectionRepository.deleteAll(vote.getSelections());
+        voteSelectionRepository.flush();
+        vote.getSelections().clear();
+
+        List<VoteResponse.SelectionResponseDto> selectionResponses = new ArrayList<>();
+
+        for (VoteRequest.SelectionDto sel : request.getSelections()) {
+            Option option = optionRepository.findById(sel.getOptionId())
+                    .orElseThrow(() -> new EntityNotFoundException("Option", "id", sel.getOptionId()));
+
+            if (!option.getDecision().getDecisionId().equals(decision.getDecisionId())) {
+                throw new BusinessException("Option does not belong to this decision.");
+            }
+
+            Integer rating = sel.getRating();
+            if (decision.getVoteType() == VoteType.RATING) {
+                if (rating == null || rating < 1 || rating > 10) {
+                    throw new BusinessException("Rating vote requires a score between 1 and 10.");
+                }
+                optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.valueOf(rating));
+            } else {
+                optionRepository.updateOptionScore(option.getOptionId(), BigDecimal.ONE);
+            }
+
+            VoteSelection voteSelection = VoteSelection.builder()
+                    .vote(vote)
+                    .option(option)
+                    .rating(rating)
+                    .build();
+
+            vote.getSelections().add(voteSelection);
+            selectionResponses.add(new VoteResponse.SelectionResponseDto(option.getOptionId(), rating));
+        }
+
+        vote = voteRepository.save(vote);
+
+        return VoteResponse.builder()
+                .voteId(vote.getVoteId())
+                .decisionId(decision.getDecisionId())
+                .voter(userMapper.toResponse(vote.getUser()))
+                .selections(selectionResponses)
+                .createdAt(vote.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VoteResponse getUserVote(Long userId, Long decisionId) {
+        List<Vote> votes = voteRepository.findByUserUserIdAndDecisionDecisionId(userId, decisionId);
+        if (votes.isEmpty()) {
+            return null;
+        }
+
+        Vote vote = votes.get(0);
+        List<VoteResponse.SelectionResponseDto> selections = vote.getSelections().stream()
+                .map(vs -> new VoteResponse.SelectionResponseDto(vs.getOption().getOptionId(), vs.getRating()))
+                .collect(Collectors.toList());
+
+        return VoteResponse.builder()
+                .voteId(vote.getVoteId())
+                .decisionId(decisionId)
+                .voter(userMapper.toResponse(vote.getUser()))
+                .selections(selections)
+                .createdAt(vote.getCreatedAt())
+                .build();
     }
 
     @Override
@@ -141,7 +256,7 @@ public class VoteServiceImpl implements VoteService {
         long maxVotes = -1;
 
         for (Option opt : options) {
-            long count = voteRepository.countByOptionOptionId(opt.getOptionId());
+            long count = voteSelectionRepository.countByOptionOptionId(opt.getOptionId());
             countsMap.put(opt.getOptionId(), count);
 
             if (count > maxVotes) {

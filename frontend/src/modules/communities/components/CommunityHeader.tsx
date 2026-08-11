@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Users, Globe, Lock, Settings, Calendar, Shield } from "lucide-react";
+import { Users, Globe, Lock, Settings, Calendar, Shield, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CommunityResponse, CommunityMemberResponse } from "../types/community";
@@ -84,21 +84,30 @@ export function CommunityHeader({ community, membership }: CommunityHeaderProps)
             {community.description || "Welcome to our community!"}
           </p>
 
-          <div className="flex flex-wrap gap-4 md:gap-8 text-sm text-slate-400 font-medium">
-            <div className="flex items-center hover:text-white transition-colors cursor-pointer" onClick={() => window.location.href = `/communities/${community.communityId}/members`}>
-              <Users className="w-4 h-4 mr-2 text-blue-500" />
-              <span>{community.memberCount.toLocaleString()} {community.memberCount === 1 ? 'Member' : 'Members'}</span>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap gap-4 md:gap-8 text-sm text-slate-400 font-medium">
+              <div className="flex items-center hover:text-white transition-colors cursor-pointer" onClick={() => window.location.href = `/communities/${community.communityId}/members`}>
+                <Users className="w-4 h-4 mr-2 text-blue-500" />
+                <span>{community.memberCount.toLocaleString()} {community.memberCount === 1 ? 'Member' : 'Members'}</span>
+              </div>
+              
+              <div className="flex items-center">
+                <Shield className="w-4 h-4 mr-2 text-blue-500" />
+                <span>Managed by <span className="text-white font-semibold">{community.owner.username}</span></span>
+              </div>
+              
+              <div className="flex items-center">
+                <Calendar className="w-4 h-4 mr-2 text-blue-500" />
+                <span>Created on {createdDate}</span>
+              </div>
             </div>
             
-            <div className="flex items-center">
-              <Shield className="w-4 h-4 mr-2 text-blue-500" />
-              <span>Managed by <span className="text-white font-semibold">{community.owner.username}</span></span>
-            </div>
-            
-            <div className="flex items-center">
-              <Calendar className="w-4 h-4 mr-2 text-blue-500" />
-              <span>Created on {createdDate}</span>
-            </div>
+            <Button asChild variant="outline" className="border-slate-700 bg-slate-800 text-white hover:bg-slate-700 shrink-0">
+              <Link to={`/communities/${community.communityId}/members`}>
+                View All Members
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

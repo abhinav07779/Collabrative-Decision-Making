@@ -12,24 +12,18 @@ import java.util.Optional;
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
+    @Query("SELECT COUNT(v) FROM Vote v JOIN v.selections s WHERE s.option.optionId = :optionId")
+    long countByOptionOptionId(@Param("optionId") Long optionId);
+
     List<Vote> findByDecisionDecisionId(Long decisionId);
 
     List<Vote> findByUserUserIdAndDecisionDecisionId(Long userId, Long decisionId);
 
-    Optional<Vote> findByUserUserIdAndOptionOptionId(Long userId, Long optionId);
-
     boolean existsByUserUserIdAndDecisionDecisionId(Long userId, Long decisionId);
-
-    boolean existsByUserUserIdAndOptionOptionId(Long userId, Long optionId);
 
     long countByDecisionDecisionId(Long decisionId);
 
-    long countByOptionOptionId(Long optionId);
-
     long countByUserUserId(Long userId);
-
-    @Query("SELECT v.option.optionId, COUNT(v) FROM Vote v WHERE v.decision.decisionId = :decisionId GROUP BY v.option.optionId")
-    List<Object[]> getVoteCountsByDecisionGroupedByOption(@Param("decisionId") Long decisionId);
 
     void deleteByUserUserIdAndDecisionDecisionId(Long userId, Long decisionId);
 }

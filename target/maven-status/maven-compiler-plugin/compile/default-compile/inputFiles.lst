@@ -1,5 +1,7 @@
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\audit\annotation\Auditable.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\audit\aspect\AuditAspect.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\common\enums\AbuseReason.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\common\enums\AbuseReportStatus.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\common\enums\AccountStatus.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\common\enums\AuthProvider.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\common\enums\CommunityVisibility.java
@@ -22,6 +24,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\config\PasswordEncoderConfig.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\config\SecurityConfig.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\config\WebMvcConfig.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\AbuseReportController.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\AdminController.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\AnalyticsController.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\AuthController.java
@@ -33,6 +36,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\UserController.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\controller\VoteController.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\DecisionHubApplication.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\AbuseReportRequest.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\AuthRequest.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\CommentRequest.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\CommunityRequest.java
@@ -44,6 +48,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\TokenRefreshRequest.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\UserRequest.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\request\VoteRequest.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\AbuseReportResponse.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\AttachmentResponse.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\AuditLogResponse.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\AuthResponse.java
@@ -58,6 +63,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\UserResponse.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\VoteResponse.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\dto\response\VoteResultResponse.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\AbuseReport.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\Attachment.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\AuditLog.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\base\BaseEntity.java
@@ -73,6 +79,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\SavedDecision.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\User.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\Vote.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\entity\VoteSelection.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\exception\BusinessException.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\exception\DuplicateException.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\exception\EntityNotFoundException.java
@@ -96,6 +103,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\notification\email\EmailService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\notification\email\EmailServiceImpl.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\notification\fcm\FirebaseNotificationService.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\AbuseReportRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\AttachmentRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\AuditLogRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\BlacklistedTokenRepository.java
@@ -110,6 +118,7 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\SavedDecisionRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\UserRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\VoteRepository.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\repository\VoteSelectionRepository.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\scheduler\DecisionScheduler.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\security\CustomUserDetailsService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\security\CustomUserDetailsServiceImpl.java
@@ -119,12 +128,14 @@ C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Pla
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\security\jwt\JwtTokenProvider.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\security\SecurityUtils.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\security\UserPrincipal.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\AbuseReportService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\AnalyticsService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\AuditLogService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\AuthService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\CommentService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\CommunityService.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\DecisionService.java
+C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\impl\AbuseReportServiceImpl.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\impl\AnalyticsServiceImpl.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\impl\AuditLogServiceImpl.java
 C:\Users\pabhi\Downloads\Collaborative-Decision-Making-And-Community-Polling-Platform-main\src\main\java\com\decisionhub\service\impl\AuthServiceImpl.java

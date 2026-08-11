@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,8 +20,17 @@ public class VoteRequest {
     @NotNull(message = "Decision ID is required")
     private Long decisionId;
 
-    @NotNull(message = "Option ID is required")
-    private Long optionId;
+    @NotNull(message = "Selections are required")
+    private List<SelectionDto> selections;
 
-    private Integer rating;
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SelectionDto {
+        @NotNull(message = "Option ID is required")
+        private Long optionId;
+        private Integer rating;
+    }
 }

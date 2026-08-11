@@ -1,7 +1,15 @@
 import React from "react";
-import { Filter } from "lucide-react";
+import { Filter, ChevronDown, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { DecisionStatus, DecisionVisibility, VoteType } from "../types/decision";
 
 interface DecisionFiltersProps {
@@ -21,14 +29,50 @@ export function DecisionFilters({
   onVisibilityChange,
   onVoteTypeChange,
 }: DecisionFiltersProps) {
-  return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 sticky top-24">
-      <div className="flex items-center gap-2 mb-6">
-        <Filter className="w-5 h-5 text-blue-500" />
-        <h3 className="font-bold text-white">Filters</h3>
-      </div>
+  const activeFiltersCount = 
+    (statusFilter ? 1 : 0) + 
+    (visibilityFilter ? 1 : 0) + 
+    (voteTypeFilter ? 1 : 0);
 
-      <div className="space-y-6">
+  const handleClearFilters = () => {
+    onStatusChange("");
+    onVisibilityChange("");
+    onVoteTypeChange("");
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="bg-slate-900 border-slate-800 text-white hover:bg-slate-800">
+          <Filter className="w-4 h-4 mr-2 text-blue-500" />
+          Filters
+          {activeFiltersCount > 0 && (
+            <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-medium text-white">
+              {activeFiltersCount}
+            </span>
+          )}
+          <ChevronDown className="w-4 h-4 ml-2 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      
+      <DropdownMenuContent align="end" className="w-72 bg-slate-900 border-slate-800 p-4 shadow-xl">
+        <div className="flex items-center justify-between mb-4">
+          <DropdownMenuLabel className="p-0 text-white font-bold">Filter Decisions</DropdownMenuLabel>
+          {activeFiltersCount > 0 && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleClearFilters}
+              className="h-8 px-2 text-xs text-slate-400 hover:text-white"
+            >
+              <X className="w-3 h-3 mr-1" />
+              Clear All
+            </Button>
+          )}
+        </div>
+        <DropdownMenuSeparator className="bg-slate-800 mb-4" />
+
+        <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
         <div>
           <Label className="text-slate-400 mb-3 block">Status</Label>
           <RadioGroup 
@@ -102,7 +146,8 @@ export function DecisionFilters({
             </div>
           </RadioGroup>
         </div>
-      </div>
-    </div>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

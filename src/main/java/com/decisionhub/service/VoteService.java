@@ -12,5 +12,7 @@ public interface VoteService {
 
     VoteResponse castAnonymousVote(VoteRequest request);
 
+    VoteResponse getUserVote(Long userId, Long decisionId);
+
     VoteResultResponse getVoteResults(Long decisionId);
 }

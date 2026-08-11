@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,16 @@ public class VoteController {
             @Valid @RequestBody VoteRequest request) {
         VoteResponse response = voteService.changeVote(currentUser.getId(), voteId, request);
         return ResponseEntity.ok(ApiResponse.success("Vote updated successfully", response));
+    }
+
+
+    @GetMapping("/decision/{decisionId}/me")
+    @Operation(summary = "Get the current user's vote for a decision")
+    public ResponseEntity<ApiResponse<VoteResponse>> getUserVote(
+            @PathVariable Long decisionId,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        VoteResponse response = voteService.getUserVote(currentUser.getId(), decisionId);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/decision/{decisionId}/results")

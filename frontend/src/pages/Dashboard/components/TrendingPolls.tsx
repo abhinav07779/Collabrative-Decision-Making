@@ -1,9 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DecisionResponse } from "@/types";
 import { TrendingUp, Users } from "lucide-react";
 
 export function TrendingPolls({ decisions }: { decisions: DecisionResponse[] }) {
+  const navigate = useNavigate();
+
   if (!decisions || decisions.length === 0) {
     return (
       <Card className="h-full">
@@ -30,8 +33,14 @@ export function TrendingPolls({ decisions }: { decisions: DecisionResponse[] }) 
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {decisions.map((decision, index) => (
-            <div key={decision.id} className="flex items-center gap-3">
+          {decisions.map((decision, index) => {
+            const decisionId = (decision as any).decisionId || decision.id;
+            return (
+            <div 
+              key={decisionId} 
+              className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 p-2 rounded-md transition-colors"
+              onClick={() => navigate(`/decisions/${decisionId}`)}
+            >
               <div className="font-bold text-lg text-muted-foreground w-4 text-center">
                 {index + 1}
               </div>
@@ -50,7 +59,7 @@ export function TrendingPolls({ decisions }: { decisions: DecisionResponse[] }) 
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </CardContent>
     </Card>

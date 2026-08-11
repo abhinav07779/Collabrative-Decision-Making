@@ -59,7 +59,7 @@ export default function DecisionFeed() {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="flex flex-col space-y-6">
         {data.content.map((decision: any) => (
           <DecisionCard 
             key={decision.decisionId} 
@@ -71,46 +71,53 @@ export default function DecisionFeed() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Decision Board</h1>
-          <p className="text-slate-400">Discover and participate in community decisions.</p>
-        </div>
-        
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <DecisionSearch 
-            onSearch={setSearchQuery} 
-            className="w-full md:w-64"
-          />
-          {user && (
-            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
-              <Link to="/decisions/new">
-                <PlusCircle className="w-4 h-4 mr-2" />
-                New Decision
-              </Link>
-            </Button>
-          )}
-        </div>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Decision Board</h1>
+        <p className="text-slate-400">Discover and participate in community decisions.</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Filters */}
-        <div className="w-full lg:w-64 shrink-0 order-2 lg:order-1 hidden md:block">
-          <DecisionFilters 
-            statusFilter={statusFilter}
-            visibilityFilter={visibilityFilter}
-            voteTypeFilter={voteTypeFilter}
-            onStatusChange={setStatusFilter}
-            onVisibilityChange={setVisibilityFilter}
-            onVoteTypeChange={setVoteTypeFilter}
-          />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {/* Top Controls Row */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+            <DecisionSearch 
+              onSearch={setSearchQuery} 
+              className="w-full sm:w-64"
+            />
+            <DecisionFilters 
+              statusFilter={statusFilter}
+              visibilityFilter={visibilityFilter}
+              voteTypeFilter={voteTypeFilter}
+              onStatusChange={setStatusFilter}
+              onVisibilityChange={setVisibilityFilter}
+              onVoteTypeChange={setVoteTypeFilter}
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+            {!(searchQuery || statusFilter || visibilityFilter || voteTypeFilter) && (
+              <TabsList className="bg-slate-900 border border-slate-800 p-1">
+                <TabsTrigger value="all" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">All</TabsTrigger>
+                <TabsTrigger value="trending" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Trending</TabsTrigger>
+                <TabsTrigger value="popular" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Popular</TabsTrigger>
+                <TabsTrigger value="latest" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Latest</TabsTrigger>
+              </TabsList>
+            )}
+
+            {user && (
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
+                <Link to="/decisions/new">
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  New Decision
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 order-1 lg:order-2">
+        <div className="w-full">
           {searchQuery || statusFilter || visibilityFilter || voteTypeFilter ? (
-            // If any filter is active, only show the "All" filtered results
             <div>
               <div className="mb-4 text-sm text-slate-400 font-medium">
                 Showing results for your filters
@@ -118,33 +125,23 @@ export default function DecisionFeed() {
               {renderContent(allDecisions, loadingAll)}
             </div>
           ) : (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="bg-slate-900 border border-slate-800 p-1 mb-6">
-                <TabsTrigger value="all" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">All</TabsTrigger>
-                <TabsTrigger value="trending" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Trending</TabsTrigger>
-                <TabsTrigger value="popular" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Popular</TabsTrigger>
-                <TabsTrigger value="latest" className="data-[state=active]:bg-slate-800 data-[state=active]:text-white">Latest</TabsTrigger>
-              </TabsList>
-              
+            <div className="w-full">
               <TabsContent value="all" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 {renderContent(allDecisions, loadingAll)}
               </TabsContent>
-              
               <TabsContent value="trending" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 {renderContent(trendingDecisions, loadingTrending)}
               </TabsContent>
-              
               <TabsContent value="popular" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 {renderContent(popularDecisions, loadingPopular)}
               </TabsContent>
-              
               <TabsContent value="latest" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
                 {renderContent(latestDecisions, loadingLatest)}
               </TabsContent>
-            </Tabs>
+            </div>
           )}
         </div>
-      </div>
+      </Tabs>
     </div>
   );
 }

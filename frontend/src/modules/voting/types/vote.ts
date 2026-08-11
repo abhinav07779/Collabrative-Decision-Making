@@ -1,18 +1,21 @@
 import { UserResponse } from "@/types";
 import { OptionResponse } from "@/modules/decisions/types/decision";
 
-export interface VoteRequest {
-  decisionId: number;
+export interface SelectionDto {
   optionId: number;
   rating?: number;
+}
+
+export interface VoteRequest {
+  decisionId: number;
+  selections: SelectionDto[];
 }
 
 export interface VoteResponse {
   voteId: number;
   decisionId: number;
-  optionId: number;
   voter?: UserResponse;
-  rating?: number;
+  selections: SelectionDto[];
   createdAt: string;
 }
 

@@ -1,10 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DecisionResponse } from "@/types";
 import { Target, Users, MessageSquare } from "lucide-react";
 
 export function RecentDecisions({ decisions }: { decisions: DecisionResponse[] }) {
+  const navigate = useNavigate();
+
   if (!decisions || decisions.length === 0) {
     return (
       <Card className="h-full">
@@ -29,8 +32,14 @@ export function RecentDecisions({ decisions }: { decisions: DecisionResponse[] }
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {decisions.map((decision) => (
-            <div key={decision.id} className="flex items-start justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm transition-colors hover:bg-muted/50 cursor-pointer">
+          {decisions.map((decision) => {
+            const decisionId = (decision as any).decisionId || decision.id;
+            return (
+            <div 
+              key={decisionId} 
+              className="flex items-start justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm transition-colors hover:bg-muted/50 cursor-pointer"
+              onClick={() => navigate(`/decisions/${decisionId}`)}
+            >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <h4 className="font-semibold">{decision.title}</h4>
@@ -52,7 +61,7 @@ export function RecentDecisions({ decisions }: { decisions: DecisionResponse[] }
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </CardContent>
     </Card>
