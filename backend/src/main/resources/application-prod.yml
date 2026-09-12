@@ -8,6 +8,13 @@ server:
   port: ${PORT:8080}
   servlet:
     context-path: /
+  tomcat:
+    threads:
+      max: 15
+      min-spare: 2
+    accept-count: 10
+    max-connections: 50
+
 
 spring:
   # Production Database - strictly from environment variables
@@ -59,3 +66,9 @@ logging:
     com.decisionhub: INFO
     org.hibernate.SQL: WARN
     org.springframework.security: WARN
+
+# OpenAPI optimization for 512MB RAM
+springdoc:
+  cache:
+    disabled: true
+
