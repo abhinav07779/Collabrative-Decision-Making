@@ -28,11 +28,12 @@ EXPOSE 8080
 ENTRYPOINT ["java", \
   "-XX:+UseSerialGC", \
   "-Xss256k", \
-  "-Xms64m", \
-  "-Xmx160m", \
-  "-XX:MaxMetaspaceSize=160m", \
-  "-XX:ReservedCodeCacheSize=48m", \
+  "-Xms96m", \
+  "-Xmx256m", \
+  "-XX:MaxMetaspaceSize=144m", \
+  "-XX:ReservedCodeCacheSize=32m", \
   "-XX:MaxDirectMemorySize=16m", \
   "-jar", "app.jar"]
+
 
 
