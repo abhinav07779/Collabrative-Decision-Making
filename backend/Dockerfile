@@ -29,10 +29,10 @@ ENTRYPOINT ["java", \
   "-XX:+UseSerialGC", \
   "-Xss256k", \
   "-Xms64m", \
-  "-Xmx192m", \
-  "-XX:MaxMetaspaceSize=96m", \
-  "-XX:ReservedCodeCacheSize=32m", \
+  "-Xmx160m", \
+  "-XX:MaxMetaspaceSize=160m", \
+  "-XX:ReservedCodeCacheSize=48m", \
   "-XX:MaxDirectMemorySize=16m", \
-  "-XX:CICompilerCount=2", \
   "-jar", "app.jar"]
+
 
