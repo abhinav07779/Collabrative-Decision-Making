@@ -1,0 +1,203 @@
+import React, { useState } from "react";
+import { DecisionResponse } from "../types/decision";
+import { DecisionStatusBadge } from "./DecisionStatusBadge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Users, Calendar, BarChart3, Edit, Trash2, Flag, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
+import { useDecisionMutations } from "../hooks/useDecisionMutations";
+import { useSavedDecisions } from "../hooks/useDecisions";
+import { useAuth } from "@/context/AuthContext";
+import { ReportDecisionModal } from "./ReportDecisionModal";
+import { BookmarkButton } from "./BookmarkButton";
+import { HikeButton } from "./HikeButton";
+import { useConfirm } from "@/context/ConfirmDialogContext";
+
+interface DecisionHeaderProps {
+  decision: DecisionResponse;
+}
+
+export function DecisionHeader({ decision }: DecisionHeaderProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { deleteDecision } = useDecisionMutations();
+  const { confirm } = useConfirm();
+  const { data: savedData } = useSavedDecisions({ size: 100 });
+  const isSaved = savedData?.content?.some((d: any) => d.decisionId === decision.decisionId) ?? false;
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  
+  const isOwner = user?.userId === decision.createdBy.userId;
+  
+  const createdDate = new Date(decision.createdAt).toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  
+  const deadlineDate = decision.deadline ? new Date(decision.deadline).toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }) : "No deadline";
+
+  const handleDelete = async () => {
+    const confirmed = await confirm({
+      title: 'Delete Decision Board',
+      message: `Are you sure you want to permanently delete "${decision.title}"? All votes, option rankings, and discussion comments will be deleted permanently.`,
+      confirmText: 'Delete Decision',
+      cancelText: 'Keep Decision',
+      variant: 'destructive',
+      icon: 'trash',
+      badgeText: 'Irreversible Action',
+      highlightContent: `Decision: "${decision.title}"`,
+    });
+
+    if (confirmed) {
+      deleteDecision.mutate(decision.decisionId, {
+        onSuccess: () => {
+          navigate("/decisions");
+        }
+      });
+    }
+  };
+
+  return (
+    <div className="bg-card border border-border rounded-2xl p-6 md:p-8 mb-8 shadow-xs relative overflow-hidden">
+      
+      <div className="flex flex-col lg:flex-row justify-between gap-6 relative z-10">
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <DecisionStatusBadge status={decision.status} />
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-muted text-muted-foreground border border-border">
+              {decision.voteType.replace("_", " ")}
+            </span>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-muted text-muted-foreground border border-border">
+              {decision.visibility}
+            </span>
+          </div>
+
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
+            {decision.title}
+          </h1>
+
+          {decision.description && (
+            <p className="text-muted-foreground text-base md:text-lg mb-6 max-w-3xl whitespace-pre-line leading-relaxed">
+              {decision.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-6 text-sm">
+            <div className="flex items-center gap-2.5">
+              <Avatar className="h-8 w-8 border border-border">
+                <AvatarImage src={decision.createdBy.profileImage || `https://api.dicebear.com/7.x/initials/svg?seed=${decision.createdBy.username}`} />
+                <AvatarFallback className="bg-muted text-muted-foreground font-medium text-xs">{decision.createdBy.fullName?.substring(0, 2).toUpperCase() || "U"}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground text-xs">Created by</span>
+                <span className="font-semibold text-foreground text-xs sm:text-sm">{decision.createdBy.fullName}</span>
+              </div>
+            </div>
+
+            {decision.community && (
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground text-xs">Community</span>
+                  <Link to={`/communities/${decision.community.communityId}`} className="font-semibold text-blue-600 dark:text-blue-400 hover:underline text-xs sm:text-sm">
+                    {decision.community.name}
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <BarChart3 className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground text-xs">Total Votes</span>
+                <span className="font-semibold text-foreground text-xs sm:text-sm">{decision.totalVotes.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground text-xs">Deadline</span>
+                <span className="font-semibold text-foreground text-xs sm:text-sm">{deadlineDate}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500">
+                <Eye className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground text-xs">Views</span>
+                <span className="font-semibold text-foreground text-xs sm:text-sm">{(decision.viewCount ?? 0).toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex lg:flex-col gap-3 shrink-0 relative z-10">
+          <HikeButton
+            decisionId={decision.decisionId}
+            isHiked={decision.isHiked}
+            hikeCount={decision.hikeCount ?? decision.likeCount ?? 0}
+            size="md"
+            className="w-full justify-center"
+          />
+
+          <BookmarkButton 
+            decisionId={decision.decisionId} 
+            isSaved={isSaved} 
+            variant="outline" 
+            className="w-full border-border hover:bg-muted text-foreground justify-center"
+          />
+
+          {isOwner ? (
+            <>
+              <Button asChild variant="outline" className="border-border hover:bg-muted text-foreground w-full">
+                <Link to={`/decisions/${decision.decisionId}/edit`}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Link>
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="w-full bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white border border-red-500/20"
+                onClick={handleDelete}
+                disabled={deleteDecision.isPending}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                {deleteDecision.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            </>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="border-border hover:bg-muted text-foreground w-full"
+              onClick={() => setIsReportModalOpen(true)}
+            >
+              <Flag className="w-4 h-4 mr-2 text-red-500" />
+              Report
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <ReportDecisionModal 
+        decisionId={decision.decisionId}
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+      />
+    </div>
+  );
+}

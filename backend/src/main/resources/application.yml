@@ -1,0 +1,72 @@
+# ==============================================================================
+# Common Application Configuration (Base Profile)
+# Shared configuration applied across all active profiles (dev, prod, test)
+# ==============================================================================
+
+spring:
+  application:
+    name: decisionhub-backend
+
+  profiles:
+    # Activate 'dev' profile by default if SPRING_PROFILES_ACTIVE is not set
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # File upload limits
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 200MB
+
+  # Shared Database Driver & JPA settings
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 30
+        order_inserts: true
+        order_updates: true
+
+  # Database Migrations (Flyway)
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+# Common Security & JWT Properties
+application:
+  security:
+    jwt:
+      expiration-ms: 86400000 # 24 hours
+      refresh-token-expiration-ms: 604800000 # 7 days
+      issuer: decisionhub-api
+
+  # Automated Administrator Seeding (Configurable via environment variables)
+  initial-admin:
+    enabled: ${ADMIN_SEED_ENABLED:true}
+    email: ${ADMIN_INITIAL_EMAIL:admin@decisionhub.com}
+    password: ${ADMIN_INITIAL_PASSWORD:Admin123!}
+    username: ${ADMIN_INITIAL_USERNAME:admin}
+    full-name: ${ADMIN_INITIAL_FULL_NAME:System Administrator}
+
+# OpenAPI / Swagger Documentation
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+# Spring Boot Actuator Base Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
